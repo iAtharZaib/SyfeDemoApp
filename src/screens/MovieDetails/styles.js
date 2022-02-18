@@ -6,13 +6,15 @@ const {width,height} = Dimensions.get('window');
 export default StyleSheet.create({
 
     mainContainer: {
-        backgroundColor: 'white',
-        flex: 1
+        backgroundColor: COLORS.SNACKBAR_GREEN,
+        flex: 1,
+        marginHorizontal:10
     },
     sectionContainer: {
-        backgroundColor: 'white',
+        backgroundColor: COLORS.SNACKBAR_GREEN,
         alignItems: 'center',
         justifyContent: 'center',
+        flexDirection:'row'
     },
     titleText: {
         fontWeight: 'bold',
@@ -21,46 +23,37 @@ export default StyleSheet.create({
         paddingVertical: height * 0.003,
         textDecorationLine: 'underline',
     },
-    itemStyling: {
-        flexDirection: 'row',
+    mainView:{
         alignItems: 'center',
-        justifyContent: 'space-between',
-        alignSelf: 'center',
-        width: width * 0.9,
-        paddingVertical: height * 0.01,
-        marginVertical: height * 0.005,
-        backgroundColor: COLORS.SNACKBAR_GREEN,
-        borderRadius: 20,
-    },
-    mainView: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
+        marginTop: height * 0.05,
+      },
     innerView: {
         alignItems: 'flex-start',
         justifyContent: 'space-around'
     },
     innerTitle: {
         fontWeight: 'bold',
-        textAlign: 'left',
-        fontSize: width * 0.035,
+        textAlign: 'center',
+        fontSize: width * 0.07,
         paddingVertical: height * 0.003,
     },
     innerDescription: {
-        textAlign: 'left',
+        textAlign: 'center',
         width: width * 0.65,
         fontSize: width * 0.035,
-        paddingVertical: height * 0.003,
     },
     innerText: {
-        paddingVertical: height * 0.003,
-        textAlign: 'left',
+        textAlign: 'center',
         fontSize: width * 0.035,
+        fontWeight:'bold',
+        paddingVertical:height*0.005
     },
     img: {
-        width: 70,
-        height: 70,
-        borderRadius: 35,
-        marginHorizontal: 10,
+        width: height*0.3,
+        height: height*0.3,
+        borderRadius:(height*0.3)/2
+     
     },
+    productionView:{flexDirection: 'row', marginHorizontal:10},
+    genresView:{flexDirection: 'row', paddingVertical: height * 0.005},
 });

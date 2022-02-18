@@ -1,196 +1,91 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {
+  Dimensions,
+  Image,
   SafeAreaView,
-  ScrollView,
   StatusBar,
   Text,
   View,
-  FlatList,
-  TouchableOpacity,
-  Dimensions,
-  Image,
 } from 'react-native';
-import { useDispatch,useSelector } from 'react-redux';
+import  Icon from 'react-native-vector-icons/dist/Ionicons';
 import {APIKEY, BASEURL, IMAGEPATH} from '../../const/config';
-import { set_latestMoviesList, set_moviesList, set_popularMoviesList } from '../../store/actions/mainActionCreator';
-import {COLORS} from '../../utils/Colors';
+import { COLORS } from '../../utils/Colors';
 import styles from './styles';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-const {width, height} = Dimensions.get('window');
-const MovieDetails = () => {
 
-  const latestMoviesListRedux = useSelector(
-    (state) => state.mainReducer.latestMoviesList,
-  );
-  const moviesListRedux = useSelector(
-    (state) => state.mainReducer.moviesList,
-  );
-  const popularMoviesListRedux = useSelector(
-    (state) => state.mainReducer.popularMoviesList,
-  );
-
-  const [moviesList, setmoviesList] = useState(moviesListRedux);
-  const [popularMovies, setpopularMovies] = useState(popularMoviesListRedux)
-  const [latestMovies, setlatestMovies] = useState(latestMoviesListRedux)
-  const [isLoading, setisLoading] = useState(false)
-  const dispatch = useDispatch();
-
+const MovieDetails = props => {
+  const [movieDetails, setmovieDetails] = useState();
+  const {id} = props.route.params;
 
   useEffect(() => {
-    getMoviesList();
-    // getLatestMoviesList();
-    getPopularMoviesList();
-  }, []);
+    getMovieDetails();
+  }, [props.route.params]);
 
-
-  getMoviesList = () => {
-    if(moviesListRedux && moviesListRedux?.length <= 0 ) {
-      setisLoading(true)
+  const getMovieDetails = () => {
     axios
-      .get(`${BASEURL}upcoming?api_key=${APIKEY}`)
+      .get(`${BASEURL}${id}?api_key=${APIKEY}`)
       .then(response => {
-        setisLoading(false)
-        setmoviesList(response.data.results);
-        dispatch(set_moviesList(response.data.results))
+        console.log(response);
+        setmovieDetails(response.data);
       })
       .catch(error => {
-        setisLoading(false)
         console.log(error);
       });
-    } 
-      else 
-      {
-        console.log("Already")
-      }
   };
 
-  // getLatestMoviesList = () => {
-  //   if(latestMoviesListRedux.length <= 0 ) {
-  //   axios
-  //     .get(`${BASEURL}latest?api_key=${APIKEY}`)
-  //     .then(response => {
-  //       setlatestMovies(response.data.results);
-  //       dispatch(set_latestMoviesList(response.data.results))
-  //       console.log(response, 'if chla');
-  //     })
-  //     .catch(error => {
-  //       console.log(error);
-  //     });
-  //   }
-  //     else 
-  //     {
-  //       console.log("Already")
-  //     }
-  // };
-
-  getPopularMoviesList = () => {
-    if(popularMoviesListRedux && popularMoviesListRedux?.length <= 0 ) {
-      setisLoading(true)
-    axios
-      .get(`${BASEURL}popular?api_key=${APIKEY}`)
-      .then(response => {
-        setpopularMovies(response.data.results);
-        dispatch(set_popularMoviesList(response.data.results))
-        setisLoading(false)
-      })
-      .catch(error => {
-        setisLoading(false)
-        console.log(error);
-      });
-    }
-      else 
-      {
-        console.log("Already")
-      }
-  };
-
-  return isLoading ? (
-    <SkeletonPlaceholder>
-      <SkeletonPlaceholder.Item
-        alignItems="center"
-        padding="20%"
-        marginTop="30%">
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-      </SkeletonPlaceholder.Item>
-    </SkeletonPlaceholder> ) :(
+  return (
     <SafeAreaView style={styles.mainContainer}>
       <StatusBar barStyle={'dark-content'} />
-        <View
-          style={styles.sectionContainer}>
-          <Text style={styles.titleText}>Movies Details</Text>
+      <View style={styles.sectionContainer}>
+        <TouchableOpacity style={{ flex:1, justifyContent:'flex-start', marginLeft:20}} onPress={() => props.navigation.goBack()}>
+      <Icon color={COLORS.BAR_COLOR} size={25} name={'arrow-back'} />
+      </TouchableOpacity>
+      <View style={{ flex:2, justifyContent:'flex-start'}}>
+        <Text style={styles.titleText}>Movies Details</Text>
         </View>
+      </View>
+      <View
+        style={styles.mainView}>
+          <Image
+            source={{uri: IMAGEPATH + movieDetails?.poster_path}}
+            resizeMode={'contain'}
+            style={styles.img}
+          />
 
-        <FlatList
-          keyExtractor={item => item.id}
-          data={moviesList}
-          showsVerticalScrollIndicator={true}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({item, index, separators}) => (
-            <TouchableOpacity
-              style={styles.itemStyling}>
-              <View style={styles.mainView}>
-                <Image
-                  source={{uri: IMAGEPATH + item.poster_path}}
-                  resizeMode={'contain'}
-                  style={styles.img}
-                />
-                <View style={styles.innerView}>
-                <Text
-                    style={styles.innerText}>
-                    #{item.id}
-                  </Text>
-                  <Text
-                    style={styles.innerTitle}>
-                    {item.title}
-                  </Text>
-                  <Text
-                    style={styles.innerDescription}
-                    numberOfLines={5}
-                    ellipsizeMode={'tail'}>
-                    {item.original_title}
-                  </Text>
-                  
-                </View>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+          <Text style={styles.innerText}>ID# {movieDetails?.id}</Text>
+          <Text style={styles.innerTitle}>{movieDetails?.title}</Text>
+          <Text style={styles.innerText}>
+            Release Date: {movieDetails?.release_date}
+          </Text>
+          <Text style={styles.innerText}>
+            Movie Status: {movieDetails?.status}
+          </Text>
+          <Text
+            style={styles.innerText}
+            numberOfLines={5}
+            ellipsizeMode={'tail'}>
+            Original Title {movieDetails?.original_title}
+          </Text>
+          <View style={styles.genresView}>
+            <Text style={styles.innerText}>Genres:</Text>
+            {movieDetails?.genres.map(item => (
+              <Text style={styles.innerText}>
+                {item?.name} {'\n'}
+              </Text>
+            ))}
+          </View>
+
+          <View style={styles.productionView}>
+            <Text style={styles.innerText}>Production Companies:</Text>
+            {movieDetails?.production_companies.map(item => (
+              <>
+                <Text style={[styles.innerText, {textAlign: 'left'}]}>
+                  {item?.name} {'\n'}
+                </Text>
+              </>
+            ))}
+          </View>
+        </View>
     </SafeAreaView>
   );
 };

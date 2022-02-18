@@ -4,13 +4,16 @@ import {
   Dimensions, FlatList, Image, SafeAreaView, StatusBar,
   Text, TouchableOpacity, View
 } from 'react-native';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import Icon  from 'react-native-vector-icons/dist/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import { APIKEY, BASEURL, IMAGEPATH } from '../../const/config';
 import { set_moviesList } from '../../store/actions/mainActionCreator';
+import { COLORS } from '../../utils/Colors';
 import styles from './styles';
+
+
 const {width, height} = Dimensions.get('window');
-const MoviesList = () => {
+const MoviesList = (props) => {
 
   
   const moviesListRedux = useSelector(
@@ -18,89 +21,44 @@ const MoviesList = () => {
   );
   
   const [moviesList, setmoviesList] = useState(moviesListRedux);
-  const [isLoading, setisLoading] = useState(false)
   const dispatch = useDispatch();
 
 
   useEffect(() => {
     getMoviesList();
-    
   }, []);
 
   function getMoviesList () {
     if(moviesListRedux && moviesListRedux?.length <= 0 ) {
-      setisLoading(true)
     axios
       .get(`${BASEURL}upcoming?api_key=${APIKEY}`)
       .then(response => {
-        setisLoading(false)
         setmoviesList(response.data.results);
         dispatch(set_moviesList(response.data.results))
       })
       .catch(error => {
-        setisLoading(false)
         console.log(error);
       });
     } 
       else 
       {
-        console.log("Already")
+        console.log("Already Exists")
       }
   };
 
   
 
-  return isLoading ? (
-    <SkeletonPlaceholder>
-      <SkeletonPlaceholder.Item
-        alignItems="center"
-        padding="20%"
-        marginTop="30%">
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-      </SkeletonPlaceholder.Item>
-    </SkeletonPlaceholder> ) :(
+  return (
     <SafeAreaView style={styles.mainContainer}>
       <StatusBar barStyle={'dark-content'} />
-        <View
-          style={styles.sectionContainer}>
-          <Text style={styles.titleText}>Movies List</Text>
+        <View style={styles.sectionContainer}>
+        <TouchableOpacity style={{ flex:1, justifyContent:'flex-start', marginLeft:20}} onPress={() => props.navigation.goBack()}>
+      <Icon color={COLORS.BAR_COLOR} size={25} name={'arrow-back'} />
+      </TouchableOpacity>
+      <View style={{ flex:2, justifyContent:'flex-start'}}>
+        <Text style={styles.titleText}>Movies List</Text>
         </View>
-
+      </View>
         <FlatList
           keyExtractor={item => item.id}
           data={moviesList}
@@ -108,6 +66,7 @@ const MoviesList = () => {
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item, index}) => (
             <TouchableOpacity
+            onPress={() => props.navigation.navigate('Movie Details',{id:item?.id})}
               style={styles.itemStyling}>
               <View style={styles.mainView}>
                 <Image

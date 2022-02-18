@@ -13,6 +13,7 @@ export default StyleSheet.create({
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
+        flexDirection:'row'
     },
     titleText: {
         fontWeight: 'bold',

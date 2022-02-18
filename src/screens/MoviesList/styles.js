@@ -7,12 +7,13 @@ export default StyleSheet.create({
 
     mainContainer: {
         backgroundColor: 'white',
-        flex: 1
+        flex: 1,
     },
     sectionContainer: {
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
+        flexDirection:'row'
     },
     titleText: {
         fontWeight: 'bold',

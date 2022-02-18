@@ -4,20 +4,21 @@ import {
   Dimensions, FlatList, Image, SafeAreaView, StatusBar,
   Text, TouchableOpacity, View
 } from 'react-native';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import  Icon  from 'react-native-vector-icons/dist/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import { APIKEY, BASEURL, IMAGEPATH } from '../../const/config';
 import { set_latestMoviesList } from '../../store/actions';
+import { COLORS } from '../../utils/Colors';
 import styles from './styles';
+
 const {width, height} = Dimensions.get('window');
-const LatestMovies = () => {
+const LatestMovies = (props) => {
 
   const latestMoviesListRedux = useSelector(
     (state) => state.mainReducer.latestMoviesList,
   );
   
   const [latestMovies, setlatestMovies] = useState(latestMoviesListRedux)
-  const [isLoading, setisLoading] = useState(false)
   const dispatch = useDispatch();
 
 
@@ -45,56 +46,17 @@ const LatestMovies = () => {
   };
 
   
-  return isLoading ? (
-    <SkeletonPlaceholder>
-      <SkeletonPlaceholder.Item
-        alignItems="center"
-        padding="20%"
-        marginTop="30%">
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-        <SkeletonPlaceholder.Item
-          width={width * 0.9}
-          height={height * 0.09}
-          marginBottom="10%"
-          borderRadius={20}
-        />
-      </SkeletonPlaceholder.Item>
-    </SkeletonPlaceholder> ) :(
+  return (
     <SafeAreaView style={styles.mainContainer}>
       <StatusBar barStyle={'dark-content'} />
-        <View
-          style={styles.sectionContainer}>
-          <Text style={styles.titleText}>Latest Movies</Text>
+      <View style={styles.sectionContainer}>
+        <TouchableOpacity style={{ flex:1, justifyContent:'flex-start', marginLeft:20}} onPress={() => props.navigation.goBack()}>
+      <Icon color={COLORS.BAR_COLOR} size={25} name={'arrow-back'} />
+      </TouchableOpacity>
+      <View style={{ flex:2, justifyContent:'flex-start'}}>
+        <Text style={styles.titleText}>Latest Movies</Text>
         </View>
+      </View>
 
         <FlatList
           keyExtractor={item => item.id}

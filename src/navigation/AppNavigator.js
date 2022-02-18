@@ -1,14 +1,13 @@
-import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React from 'react';
+import MyTabBar from '../components/TabBar/TabBar';
 import Home from '../screens/Home';
-import MoviesList from '../screens/MoviesList';
-import PopularMovies from '../screens/PopularMovies';
 import LatestMovies from '../screens/LatestMovies';
 import MovieDetails from '../screens/MovieDetails';
-import MyTabBar from '../components/TabBar/TabBar';
+import MoviesList from '../screens/MoviesList';
+import PopularMovies from '../screens/PopularMovies';
 
-const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const bottomTabs = [
   {
@@ -32,13 +31,13 @@ const bottomTabs = [
     component: LatestMovies,
   },
   {
-    id: 4,
+    id: 5,
     name: 'Movie Details',
     component: MovieDetails,
   },
 ];
 
-export function AppTabs() {
+export default function AppNav() {
   return (
     <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />} >
       {bottomTabs.map((value) => {
@@ -53,19 +52,4 @@ export function AppTabs() {
       })}
     </Tab.Navigator>
   );
-}
-export default function AppNav() {
-  return (
-    
-      <Stack.Navigator screenOptions={{
-        headerShown: false
-      }} initialRouteName="Home">
-         <Stack.Screen name="Home" component={AppTabs} />
-        <Stack.Screen name="MoviesList" component={MoviesList} />
-        <Stack.Screen name="PopularMovies" component={PopularMovies} />
-        <Stack.Screen name="LatestMovies" component={LatestMovies} />
-        <Stack.Screen name="MovieDetails" component={MovieDetails} />
-      </Stack.Navigator>
-    
-  );
-}
+    }

@@ -1,5 +1,5 @@
-import {StyleSheet,Dimensions} from 'react-native';
-import {COLORS} from '../../utils/Colors';
+import { Dimensions, StyleSheet } from 'react-native';
+import { COLORS } from '../../utils/Colors';
 
 const {width,height} = Dimensions.get('window');
 const TAB_WIDTH = '100%',
@@ -7,7 +7,7 @@ const TAB_WIDTH = '100%',
 export default StyleSheet.create({
     tabBarStyle: {
       height: height * 0.09,
-      backgroundColor: COLORS.PRIMARY,
+      backgroundColor: COLORS.BAR_COLOR,
       flexDirection: 'row',
       width: '95%',
       justifyContent: 'space-evenly',
