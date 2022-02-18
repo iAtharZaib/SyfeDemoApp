@@ -1,45 +1,41 @@
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  Dimensions,
-  Image,
+  Dimensions, FlatList, Image, SafeAreaView, StatusBar,
+  Text, TouchableOpacity, View
 } from 'react-native';
-import { useDispatch,useSelector } from 'react-redux';
-import {APIKEY, BASEURL, IMAGEPATH} from '../../const/config';
-import { set_latestMoviesList, set_moviesList, set_popularMoviesList } from '../../store/actions/mainActionCreator';
-import {COLORS} from '../../utils/Colors';
-import styles from './styles';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import { useDispatch, useSelector } from 'react-redux';
+import { APIKEY, BASEURL, IMAGEPATH } from '../../const/config';
+import { set_moviesList } from '../../store/actions/mainActionCreator';
+import styles from './styles';
 const {width, height} = Dimensions.get('window');
-const Home = () => {
+const MoviesList = () => {
 
   
-  const [moviesList, setmoviesList] = useState([]);
-
+  const moviesListRedux = useSelector(
+    (state) => state.mainReducer.moviesList,
+  );
+  
+  const [moviesList, setmoviesList] = useState(moviesListRedux);
   const [isLoading, setisLoading] = useState(false)
   const dispatch = useDispatch();
 
 
   useEffect(() => {
     getMoviesList();
+    
   }, []);
 
-
-  getMoviesList = () => {
-    if(moviesList && moviesList?.length <= 0 ) {
+  function getMoviesList () {
+    if(moviesListRedux && moviesListRedux?.length <= 0 ) {
       setisLoading(true)
     axios
       .get(`${BASEURL}upcoming?api_key=${APIKEY}`)
       .then(response => {
         setisLoading(false)
         setmoviesList(response.data.results);
+        dispatch(set_moviesList(response.data.results))
       })
       .catch(error => {
         setisLoading(false)
@@ -52,7 +48,7 @@ const Home = () => {
       }
   };
 
- 
+  
 
   return isLoading ? (
     <SkeletonPlaceholder>
@@ -102,7 +98,7 @@ const Home = () => {
       <StatusBar barStyle={'dark-content'} />
         <View
           style={styles.sectionContainer}>
-          <Text style={styles.titleText}>Home</Text>
+          <Text style={styles.titleText}>Movies List</Text>
         </View>
 
         <FlatList
@@ -110,7 +106,7 @@ const Home = () => {
           data={moviesList}
           showsVerticalScrollIndicator={true}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item, index, separators}) => (
+          renderItem={({item, index}) => (
             <TouchableOpacity
               style={styles.itemStyling}>
               <View style={styles.mainView}>
@@ -144,4 +140,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default MoviesList;

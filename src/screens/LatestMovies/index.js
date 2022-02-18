@@ -1,59 +1,50 @@
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  Dimensions,
-  Image,
+  Dimensions, FlatList, Image, SafeAreaView, StatusBar,
+  Text, TouchableOpacity, View
 } from 'react-native';
-import { useDispatch,useSelector } from 'react-redux';
-import {APIKEY, BASEURL, IMAGEPATH} from '../../const/config';
-import { set_latestMoviesList, set_moviesList, set_popularMoviesList } from '../../store/actions/mainActionCreator';
-import {COLORS} from '../../utils/Colors';
-import styles from './styles';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import { useDispatch, useSelector } from 'react-redux';
+import { APIKEY, BASEURL, IMAGEPATH } from '../../const/config';
+import { set_latestMoviesList } from '../../store/actions';
+import styles from './styles';
 const {width, height} = Dimensions.get('window');
-const Home = () => {
+const LatestMovies = () => {
 
+  const latestMoviesListRedux = useSelector(
+    (state) => state.mainReducer.latestMoviesList,
+  );
   
-  const [moviesList, setmoviesList] = useState([]);
-
+  const [latestMovies, setlatestMovies] = useState(latestMoviesListRedux)
   const [isLoading, setisLoading] = useState(false)
   const dispatch = useDispatch();
 
 
   useEffect(() => {
-    getMoviesList();
+    getLatestMoviesList();
   }, []);
 
-
-  getMoviesList = () => {
-    if(moviesList && moviesList?.length <= 0 ) {
-      setisLoading(true)
+  
+  function getLatestMoviesList () {
     axios
-      .get(`${BASEURL}upcoming?api_key=${APIKEY}`)
+      .get(`${BASEURL}latest?api_key=${APIKEY}`)
       .then(response => {
-        setisLoading(false)
-        setmoviesList(response.data.results);
+        let data={};
+        data.id=response.data.id;
+        data.title=response.data.title;
+        data.original_title=response.data.original_title;
+        setlatestMovies([...latestMovies,...data]);
+        dispatch(set_latestMoviesList([...latestMovies,...data]))
+        console.log(response, 'if chla');
       })
       .catch(error => {
-        setisLoading(false)
         console.log(error);
       });
-    } 
-      else 
-      {
-        console.log("Already")
-      }
+   
   };
 
- 
-
+  
   return isLoading ? (
     <SkeletonPlaceholder>
       <SkeletonPlaceholder.Item
@@ -102,15 +93,15 @@ const Home = () => {
       <StatusBar barStyle={'dark-content'} />
         <View
           style={styles.sectionContainer}>
-          <Text style={styles.titleText}>Home</Text>
+          <Text style={styles.titleText}>Latest Movies</Text>
         </View>
 
         <FlatList
           keyExtractor={item => item.id}
-          data={moviesList}
+          data={latestMovies}
           showsVerticalScrollIndicator={true}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item, index, separators}) => (
+          renderItem={({item, index,}) => (
             <TouchableOpacity
               style={styles.itemStyling}>
               <View style={styles.mainView}>
@@ -144,4 +135,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default LatestMovies;
